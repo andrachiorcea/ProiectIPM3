@@ -1,3 +1,4 @@
+-V1-
 Install:
 1.python3
 2.pylint
@@ -16,3 +17,8 @@ cmd(String cPath, String command)
 
 generateUML (String cPath, String command)
 -DOT command is used in order to generate an UML diagram in png format
+
+
+-V2-
+install Pillow
+
