@@ -5,7 +5,7 @@ import json
 import plantuml
 
 
-root_dir = sys.argv[1]
+root_dir = r'D:/Anul 2/Java/lab6'
 
 
 def get_info():
@@ -30,7 +30,7 @@ def get_info():
                             temp_dict = {class_line : {}}
 
                             if "extends" in line:
-                                implementations += [name.replace(',', '') for name in line.rsplit()[3:]]
+                                implementations += [name.replace(',', '') for name in line.rsplit()[4:]]
                                 for name in implementations:
                                     if name in found_list:
                                         pass
@@ -48,7 +48,7 @@ def get_info():
 if __name__ == "__main__":
     info = get_info()
     print(info)
-     
+         
     uml = plantuml.PlantUML()
     uml_no = 1
     for d in info:
