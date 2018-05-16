@@ -6,6 +6,6 @@ l = ast.literal_eval(out.decode('utf-8').strip())
 all_good = [{'Exception': {'ConfigurationException:': {}}}, {'FileData': {}}, {':': {'HttpException': {}}}, {'class': {}}, {'PropertyValue': {}}, {'ObjectToUrl': {'ObjectToUrlParameters': {}}}, {'class': {}}, {'UriComposer': {}}]
 
 if l == all_good:
-    print("Test passed!")
+    print "Test passed!"
 else:
-    print("Test failed.")
+    print "Test failed."
