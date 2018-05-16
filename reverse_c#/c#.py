@@ -30,7 +30,7 @@ def parse_file(file):
 
     with open(file, 'r') as f:
         for line in f:
-            if "// TODO" in line:
+            if "//" in line:
                 continue
 
             if "class " in line:
@@ -93,4 +93,9 @@ if __name__ == "__main__":
         if os.path.isfile(file_name):
             to_concat += [file_name]
 
+    if len(to_concat) is 0:
+        print "No images found."
+        print "Folder may be empty."
+        exit()
+    
     concat_images(to_concat)
