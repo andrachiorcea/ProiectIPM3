@@ -23,6 +23,15 @@ def test_2():
     return l == all_good        
 
 
+def test_3():
+    out = check_output(["python2", "c#.py", "D:\\Faculty\\IP\\ProiectIPM3\\reverse_c#\\invalid_file_test"])
+    out_list = out.split('\n')[0]
+    l = convert_to_list(out_list)
+    all_good = []
+
+    return l == all_good and "No images found" in out
+
+
 def main():
     if test_1():
         print "Test 1 passed!"
@@ -33,6 +42,12 @@ def main():
         print "Test 2 passed!"
     else:
         print "Test 2 failed."
+
+    if test_3():
+        print "Test 3 passed!"
+    else:
+        print "Test 3 failed."
+
 
 
 if __name__ == "__main__":
