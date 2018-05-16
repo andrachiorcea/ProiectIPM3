@@ -4,52 +4,64 @@ import dict2uml
 import json
 import plantuml
 
-root_dir = sys.argv[1]  # r'C:\Users\cpoenaru\Desktop\f\IP'
+
+classes = []
+# interfaces = []
+implementations = []
+relations = []
+found_list = []
+
+
+try:
+    root_dir = sys.argv[1]
+except Exception as err:
+    print "Exception caught:", err
+    print "Try passing an argument"
+    exit()
+
+
+if not os.path.exists(root_dir):
+    print "Invalid path"
+    exit()
+
+
+def parse_file(file):
+    global classes, implementations, relations, found_list
+
+    with open(file, 'r') as f:
+        for line in f:
+            if "// TODO" in line:
+                continue
+
+            if "class " in line:
+                class_line = line.rsplit()[2]
+                classes += [class_line]
+
+                temp_dict = {class_line: {}}
+
+                if ":" in line:
+                    implementations += [name.replace(',', '') for name in line.rsplit()[3:]]
+                    for name in implementations:
+                        if name in found_list:
+                            pass
+                        else:
+                            impl_dict = {name: temp_dict}
+                            found_list.append(name)
+                            relations.append(impl_dict)
+                else:
+                    relations.append(temp_dict)
+                    found_list.append(class_line)
 
 
 def get_info():
-    classes = []
-    interfaces = []
-    implementations = []
-
-    relations = []
-    found_list = []
-
     for folder, dirs, files in os.walk(root_dir):
         for file in files:
             if file.endswith('.cs'):
                 full_path = os.path.join(folder, file)
-                with open(full_path, 'r') as f:
-                    for line in f:
-                        if "// TODO" in line:
-                            continue
-
-                        if "class " in line:
-                            class_line = line.rsplit()[2]
-                            classes += [class_line]
-
-                            temp_dict = {class_line: {}}
-
-                            if ":" in line:
-                                implementations += [name.replace(',', '') for name in line.rsplit()[3:]]
-                                for name in implementations:
-                                    if name in found_list:
-                                        pass
-                                    else:
-                                        impl_dict = {name: temp_dict}
-                                        found_list.append(name)
-                                        relations.append(impl_dict)
-                            else:
-                                relations.append(temp_dict)
-                                found_list.append(class_line)
-
-                        # elif "interface " in line:
-                        #    line = line.rsplit()[1]
-                        #    interfaces += [line]
-
-    # classes, \
-    # interfaces,\
-    # implementations
+                try:
+                    parse_file(full_path)
+                except Exception as err:
+                    print "Exception caught:", err
     return relations
 
 
