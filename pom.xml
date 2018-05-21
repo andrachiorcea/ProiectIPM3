@@ -15,6 +15,11 @@
             <classifier>jar-with-dependencies</classifier>
         </dependency>
         <dependency>
+            <groupId>org.kohsuke</groupId>
+            <artifactId>github-api</artifactId>
+            <version>1.93</version>
+        </dependency>
+        <dependency>
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>1.8</version>

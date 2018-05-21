@@ -1,53 +1,50 @@
-import com.jcabi.github.Github;
-import com.jcabi.github.RtGithub;
-import com.jcabi.http.response.JsonResponse;
+import org.kohsuke.github.GHRepository;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
-public class SortByNumberOfContributorFollowers {
-    public static void retrieveOwner() {
-        final Github github = new RtGithub();
+import static java.util.stream.Collectors.toMap;
 
-        try {
-            final JsonResponse resp = github.entry()
-                    .uri().path("/search/repositories")
-                    .queryParam("q", "java").back()
-                    .fetch()
-                    .as(JsonResponse.class);
-            final List<JsonObject> items = resp.json().readObject()
-                    .getJsonArray("items")
-                    .getValuesAs(JsonObject.class);
-            for (final JsonObject item : items) {
-                String name="/repos/"+item.get("full_name").toString()+"/collaborators";
-                String username = item.get("full_name").toString().split("/")[0];
-                JsonResponse response = github.entry()
-                        .uri().path(name.replace("\"","")).back()
-                        .fetch()
-                        .as(JsonResponse.class);
-                JsonArray collaborators = response.json().readArray();
-                for (int i=0; i<collaborators.size(); i++)
-                {
-                    String followers_path ="/users/"+username+"/followers";
-                    JsonResponse response_c = github.entry()
-                            .uri().path(name.replace("\"","")).back()
-                            .fetch()
-                            .as(JsonResponse.class);
-                    JsonArray followers = response.json().readArray();
+public class SortByNumberOfContributorFollowers implements Sorting{
+    public static List<GHRepository> repositories = new ArrayList<>();
+    public static List<GHRepository> getRepositories() {
+        return repositories;
+    }
+
+    public static void setRepositories(List<GHRepository> repository) {
+        repositories = repository;
+    }
+
+    public List<GHRepository> sort(){
+        List<GHRepository> list=getRepositories();
+        Map<GHRepository, Integer> map = new HashMap<>();
+        for(GHRepository repo : list){
+            try{
+                List<GHRepository.Contributor> contributors= repo.listContributors().asList();
+                int followers=0;
+                for(GHRepository.Contributor contributor:contributors){
+                    followers+=contributor.getFollowersCount();
                 }
-                System.out.println(
-                        String.format(
-                                "repository found: %s",
-                                item.get("full_name").toString()
-                        )+" number of stars: "+collaborators.size()
-                );
-
+                map.put(repo,followers);
+            }
+            catch(Exception e)
+            {
+                System.out.println("An error occurred: "+repo.getFullName());
             }
         }
-        catch (IOException e) {
-            System.out.println("Problem encountered");
+        map=map.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1,e2) -> e1, LinkedHashMap::new));
+        for (Map.Entry<GHRepository,Integer> entry : map.entrySet()) {
+            System.out.println(
+                    String.format(
+                            "repository found: %s",
+                            entry.getKey().getFullName()+" followers "+entry.getValue()
+                    ));
+
         }
+        list=new ArrayList<>(map.keySet());
+        return list;
+
     }
 }

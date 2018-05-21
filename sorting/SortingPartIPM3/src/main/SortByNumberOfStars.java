@@ -1,51 +1,45 @@
+import org.kohsuke.github.GHRepository;
 
-import com.jcabi.github.*;
-import com.jcabi.http.response.JsonResponse;
+import java.util.*;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static java.util.stream.Collectors.toMap;
 
-public class SortByNumberOfStars {
-    public static Map<JsonObject, Integer> sortDescNumberOfStars(){
-        final Github github = new RtGithub();
-        Map<JsonObject, Integer> list = new HashMap<JsonObject, Integer>();
-        try {
-            final JsonResponse resp = github.entry()
-                    .uri().path("/search/repositories")
-                    .queryParam("q", "java")
-                    .queryParam("sort", "stars")
-                    .queryParam("order", "desc").back()
-                    .fetch()
-                    .as(JsonResponse.class);
-            final List<JsonObject> items = resp.json().readObject()
-                    .getJsonArray("items")
-                    .getValuesAs(JsonObject.class);
-            for (final JsonObject item : items) {
-                String name="/repos/"+item.get("full_name").toString()+"/stargazers";
-                JsonResponse response = github.entry()
-                        .uri().path(name.replace("\"","")).back()
-                        .fetch()
-                        .as(JsonResponse.class);
-                JsonArray stargazers = response.json().readArray();
-                int stargazers1= response.json().readArray().size();
-                list.put(item,stargazers1);
-                System.out.println(
-                        String.format(
-                                "repository found: %s",
-                                item.get("full_name").toString()
-                        )+" number of stars: "+stargazers.size()
-                );
+public class SortByNumberOfForks implements Sorting {
+    public static List<GHRepository> repositories = new ArrayList<>();
+    public static List<GHRepository> getRepositories() {
+        return repositories;
+    }
 
+    public static void setRepositories(List<GHRepository> repository) {
+        repositories = repository;
+    }
+
+    public List<GHRepository> sort(){
+        List<GHRepository> list=getRepositories();
+        Map<GHRepository, Integer> map = new HashMap<>();
+        for(GHRepository repo : list){
+            try{
+                map.put(repo,repo.getForks());
+            }
+            catch(Exception e)
+            {
+                System.out.println("An error occurred: "+repo.getFullName());
             }
         }
-        catch (IOException e) {
-            System.out.println("Problem encountered");
+        map=map.entrySet().stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1,e2) -> e1, LinkedHashMap::new));
+        for (Map.Entry<GHRepository,Integer> entry : map.entrySet()) {
+            System.out.println(
+                    String.format(
+                            "repository found: %s",
+                            entry.getKey().getFullName()+" forks "+entry.getValue()
+                    ));
+
         }
+        list=new ArrayList<>(map.keySet());
         return list;
+
     }
 }
-
