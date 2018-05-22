@@ -25,7 +25,7 @@ public class Concat {
                 }
             }
 
-            else return;
+        else return;
 
 
         List<BufferedImage> images = new ArrayList<>();
@@ -65,8 +65,21 @@ public class Concat {
 
     }
 
-   /* public static void main (String[] argc) throws IOException {
-        run("D:\\Anul 2\\ProiectIP\\ProiectIPM3\\reverse_java");
+    public void delOriginal(File dirPath) throws IOException {
+        File path = new File(String.valueOf(dirPath));
+        System.out.println(dirPath);
+        File[] files = path.listFiles();
+        if (files != null)
+            for (File file : files) {
+                if (file.getName().endsWith(".png") && !file.getName().equalsIgnoreCase("saved.png")) {
+                    if(file.delete())
+                        System.out.println ("File deleted succesfully");
+                    else
+                        System.out.println("Failed to delete the file");
+                }
+            }
+        else return;
+    }
 
-    }*/
+
 }
