@@ -1,16 +1,22 @@
+"""
+This script runs in the directory that you give as argument and looks in all the files and folders, recursively,
+for C# files in order to get all the classes, implementations etc it needs. Those will be used for building a number of
+UML diagrams (one for each class). In the end, those diagrams will be concatenated into one.
+"""
+
 import os
 import sys
 import dict2uml
-import json
 import plantuml
 
 
 classes = []
-# interfaces = []
 implementations = []
 relations = []
 found_list = []
 
+#  root_dir can be given a path if you want to call it without any args
+#  e.g.:   root_dir = "C:\TestingDir" or root_dir = os.getcwd()
 
 try:
     root_dir = sys.argv[1]
@@ -25,10 +31,16 @@ if not os.path.exists(root_dir):
     exit()
 
 
-def parse_file(file):
+def parse_file(filename):
+    """
+    This will parse the C# file given as argument and will get out of it all the classes, implementations etc
+    :return: relations -> a dictionary with all the classes and their relations; implementations etc
+    >> parse_file(path)
+    """
+
     global classes, implementations, relations, found_list
 
-    with open(file, 'r') as f:
+    with open(filename, 'r') as f:
         for line in f:
             if "//" in line:
                 continue
@@ -54,18 +66,33 @@ def parse_file(file):
 
 
 def get_info():
+    """
+    This will get all the necessary information as a dictionary for it to be used to get the UML diagram, recursively
+    walking through the directory that was given as argument.
+    parse_file function is used here for getting the information
+    :return: relations -> a dictionary with all the classes and their relations; implementations etc
+    >> info = get_info()
+    """
     for folder, dirs, files in os.walk(root_dir):
-        for file in files:
-            if file.endswith('.cs'):
-                full_path = os.path.join(folder, file)
+        for filename in files:
+            if filename.endswith('.cs'):
+                full_path = os.path.join(folder, filename)
                 try:
                     parse_file(full_path)
-                except Exception as err:
-                    print "Exception caught:", err
+                except Exception as e:
+                    print "Exception caught:", e
     return relations
 
 
 def concat_images(images):
+    """
+    This function will concatenate all the images given as the parameter in a single image and will save it
+        in the running directory. It runs recursively in the root_dir directory.
+    :param images: this is an array containing images' paths that will be used for concatenation
+    :return: it creates a new image, final_diagram.png with everything combined
+    >> concat_images(["C:\img1.png", "D:\imgX.png", "C:\Users\JohnDoe\Test\img.jpg", "F:\image.jpeg"])
+    final_diagram.png
+    """
     from PIL import Image
     images = map(Image.open, images)
     widths, heights = zip(*(i.size for i in images))
@@ -79,7 +106,15 @@ def concat_images(images):
     new_im.save('final_diagram.png')
 
 
-if __name__ == "__main__":
+def main():
+    """
+    This function calls get_info() in order to get a dictionary with everything it needs.
+    After printing that dictionary, using the PlantUML library, it creates a new UML diagram.
+    For every image in the running directory, the function adds the paths to to_concat array and then calls
+    concat_images with all those paths.
+    :return: it creates uml_no images with a single UML diagram per image, then it calls concat_images
+    >> main()
+    """
     info = get_info()
     print(info)
     to_concat = []
@@ -97,5 +132,9 @@ if __name__ == "__main__":
         print "No images found."
         print "Folder may be empty."
         exit()
-    
+
     concat_images(to_concat)
+
+
+if __name__ == "__main__":
+    main()
