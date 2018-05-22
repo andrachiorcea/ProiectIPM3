@@ -1,8 +1,8 @@
 package manager;
 
 import org.kohsuke.github.GHRepository;
-import sorting.SortingFactory;
-import sorting.SortingMethod;
+import sorting.*;
+
 
 import java.util.List;
 
@@ -11,8 +11,15 @@ public class SortingManager {
     private SortingMethod sortingMethod;
     private SortingFactory sortingFactory = new SortingFactory();
 
+    public void init(){
+        sortingFactory.AddSortingMethod("SortByNumberOfContributorFollowers", new SortByNumberOfContributorFollowers());
+        sortingFactory.AddSortingMethod("SortByNumberOfForks", new SortByNumberOfForks());
+        sortingFactory.AddSortingMethod("SortByNumberOfReleases", new SortByNumberOfReleases());
+    }
+
     public SortingManager() {
         // Default sorting method
+        init();
         this.stringMethod = "SortByNumberOfReleases";
         this.sortingMethod = sortingFactory.getSortingMethod(stringMethod);
     }

@@ -6,7 +6,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
-class SortByNumberOfForks extends SortingMethod {
+public class SortByNumberOfForks extends SortingMethod {
 
     @Override
     public List<GHRepository> sort(List<GHRepository> repositories){

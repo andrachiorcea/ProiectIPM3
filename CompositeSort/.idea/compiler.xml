@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="CompositeSort" />
+        <module name="sort-and-reverse" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="CompositeSort" target="1.8" />
+      <module name="sort-and-reverse" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
