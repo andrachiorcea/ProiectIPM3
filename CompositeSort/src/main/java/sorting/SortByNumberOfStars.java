@@ -1,4 +1,4 @@
-//package sorting;
+package sorting;
 import org.kohsuke.github.GHRepository;
 
 import java.util.*;

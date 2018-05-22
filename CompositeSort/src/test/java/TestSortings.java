@@ -1,16 +1,25 @@
+import manager.SortingManager;
 import mockit.integration.junit4.JMockit;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kohsuke.github.GHRepository;
+import sort.*;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(JMockit.class)
 public class TestSortings {
+
     @Test
     public void releasesSortingTest(){
         List<String> languages=new ArrayList<>();
@@ -86,6 +95,52 @@ public class TestSortings {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getSortingMethodTestKeyExists() {
+        SortingMethod sortingMethod = new SortByNumberOfStars();
+        SortingFactory sortingFactory = new SortingFactory();
+        sortingFactory.AddSortingMethod("SortByNumberOfStars", new SortByNumberOfStars());
+        assertEquals(sortingMethod.getClass(), sortingFactory.getSortingMethod("SortByNumberOfStars").getClass());
+    }
+
+    @Test
+    public void getSortingMethodTestKeyDoesNotExist() {
+        SortingFactory factory = new SortingFactory();
+        assertEquals(null, factory.getSortingMethod("ceva"));
+    }
+
+    @Test
+    public void sortManagerConstructorTest(){
+        SortingManager manager=new SortingManager("SortByNumberOfReleases");
+        assertTrue(manager.getStringMethod().equals("SortByNumberOfReleases"));
+    }
+
+    @Test
+    public void setStringMethodTest(){
+        SortingManager manager=new SortingManager();
+        manager.setStringMethod("SortByNumberOfReleases");
+        assertTrue(manager.getStringMethod().equals("SortByNumberOfReleases"));
+    }
+
+    @Test
+    public void callSortMethodTest(){
+        SortingManager manager=new SortingManager();
+        List<String> languages=new ArrayList<>();
+        List<String> set=new ArrayList<>();
+        set.add("sudoku");
+        set.add("number");
+        set.add("puzzle");
+        languages.add("java");
+        List<GHRepository> repos=manager.callSortMethod(RepoCrawler.getReposList(set,languages,10));
+        for (int i = 0; i < repos.size() - 1 ; i++) {
+            try {
+                assertTrue(repos.get(i).listReleases().asList().size() >= (repos.get(i+1).listReleases().asList().size()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -26,6 +26,7 @@ public class SortingManager {
     }
 
     public SortingManager(String stringMethod) {
+        init();
         this.stringMethod = stringMethod;
         this.sortingMethod = sortingFactory.getSortingMethod(stringMethod);
     }
