@@ -15,6 +15,7 @@ public class SortingManager {
         sortingFactory.AddSortingMethod("SortByNumberOfContributorFollowers", new SortByNumberOfContributorFollowers());
         sortingFactory.AddSortingMethod("SortByNumberOfForks", new SortByNumberOfForks());
         sortingFactory.AddSortingMethod("SortByNumberOfReleases", new SortByNumberOfReleases());
+        sortingFactory.AddSortingMethod("SortByNumberOfStars", new SortByNumberOfStars());
     }
 
     public SortingManager() {
