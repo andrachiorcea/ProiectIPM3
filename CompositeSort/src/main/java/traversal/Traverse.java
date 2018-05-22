@@ -7,25 +7,34 @@ import concatenation.*;
 
 public class Traverse {
 
-        static Concat c = new Concat();
-        public static void main (String args[]) throws IOException {
+    static Concat c = new Concat();
+    public static void main (String args[]) throws IOException {
 
-            displayIt(new File("D:\\Anul 2\\ProiectIP\\ProiectIPM3"));
-        }
+        displayIt(new File("C:\\Users\\hriscu ilie\\Desktop\\INFO\\JAVA\\IP\\Combine"));
+        deleteIt (new File("C:\\Users\\hriscu ilie\\Desktop\\INFO\\JAVA\\IP\\Combine"));
+    }
 
-        public static void displayIt(File node) throws IOException {
+    public static void displayIt(File node) throws IOException {
 
-
-
-            if(node.isDirectory() && !node.getName().startsWith(".")){
-//                System.out.println(node.getAbsoluteFile());
-                String[] subNote = node.list();
-                for(String filename : subNote){
-//                    System.out.println(filename);
-                    displayIt(new File(node, filename));
-                    c.run(node.getAbsoluteFile());
-                }
+        if(node.isDirectory() && !node.getName().startsWith(".")){
+            String[] subNote = node.list();
+            for(String filename : subNote){
+                displayIt(new File(node, filename));
+                c.run(node.getAbsoluteFile());
             }
-            else return;
         }
+        else return;
+    }
+
+    public static void deleteIt(File node) throws IOException {
+        if(node.isDirectory() && !node.getName().startsWith(".")){
+            String[] subNote = node.list();
+            for(String filename : subNote){
+                deleteIt(new File(node, filename));
+                c.delOriginal(node.getAbsoluteFile());
+            }
+        }
+        else return;
+
+    }
 }
