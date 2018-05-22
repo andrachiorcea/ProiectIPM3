@@ -4,10 +4,6 @@ import dict2uml
 import json
 import plantuml
 
-
-root_dir = r'D:/Anul 2/Java/lab6'
-
-
 def get_info():
     classes = []
     interfaces = []
@@ -22,15 +18,20 @@ def get_info():
                 full_path = os.path.join(folder, file)
                 with open(full_path, 'r') as f:
                     for line in f:
-                        if "class " in line:
+                        if "class " in line and "class constructor" not in line:
+#                             print line
                             class_line = line.split()[2]
-#                             class_line = line.strip('\n')
+#                             print class_line
                             classes += [class_line]
 
                             temp_dict = {class_line : {}}
 
                             if "extends" in line:
-                                implementations += [name.replace(',', '') for name in line.rsplit()[4:]]
+                                print line
+                                for name in line.split()[4:]:
+                                    if name not in "\{":
+                                        implementations += [name.replace(',', '')]
+                                        print implementations
                                 for name in implementations:
                                     if name in found_list:
                                         pass
@@ -48,7 +49,7 @@ def get_info():
 if __name__ == "__main__":
     info = get_info()
     print(info)
-         
+            
     uml = plantuml.PlantUML()
     uml_no = 1
     for d in info:
