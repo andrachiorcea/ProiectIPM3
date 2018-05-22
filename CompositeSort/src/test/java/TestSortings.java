@@ -1,16 +1,11 @@
 import manager.SortingManager;
 import mockit.integration.junit4.JMockit;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kohsuke.github.GHRepository;
-import sort.*;
+import sorting.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
