@@ -8,6 +8,7 @@ import os
 import sys
 import dict2uml
 import plantuml
+import time
 
 
 classes = []
@@ -17,6 +18,8 @@ found_list = []
 
 #  root_dir can be given a path if you want to call it without any args
 #  e.g.:   root_dir = "C:\TestingDir" or root_dir = os.getcwd()
+
+root_dir = os.getcwd()
 
 try:
     root_dir = sys.argv[1]
@@ -84,7 +87,7 @@ def get_info():
     return relations
 
 
-def concat_images(images):
+def concat_images(images, unique):
     """
     This function will concatenate all the images given as the parameter in a single image and will save it
         in the running directory. It runs recursively in the root_dir directory.
@@ -103,7 +106,7 @@ def concat_images(images):
     for im in images:
         new_im.paste(im, (x_offset, 0))
         x_offset += im.size[0]
-    new_im.save('final_diagram.png')
+    new_im.save('final_diagram-' + unique + '.png')
 
 
 def main():
@@ -115,6 +118,7 @@ def main():
     :return: it creates uml_no images with a single UML diagram per image, then it calls concat_images
     >> main()
     """
+    unique = str(time.time())
     info = get_info()
     print(info)
     to_concat = []
@@ -122,7 +126,7 @@ def main():
     uml_no = 0
     for d in info:
         uml_no += 1
-        file_name = (str(uml_no) + '.png')
+        file_name = (str(uml_no) + '-' + unique + '.png')
         with open(file_name, 'wb') as out:
             out.write(uml.processes(dict2uml.dict2plantuml(d)))
         if os.path.isfile(file_name):
@@ -133,7 +137,7 @@ def main():
         print "Folder may be empty."
         exit()
 
-    concat_images(to_concat)
+    concat_images(to_concat, unique)
 
 
 if __name__ == "__main__":
