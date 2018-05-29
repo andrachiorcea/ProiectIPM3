@@ -125,10 +125,19 @@ def main():
     uml = plantuml.PlantUML()
     uml_no = 0
     for d in info:
+        retry = 0
         uml_no += 1
         file_name = (str(uml_no) + '-' + unique + '.png')
-        with open(file_name, 'wb') as out:
-            out.write(uml.processes(dict2uml.dict2plantuml(d)))
+        while True:
+            if retry == 3:
+                print "Can't get image after 3 tries. Will try with the next image..."
+                break
+            with open(file_name, 'wb') as out:
+                try:
+                    out.write(uml.processes(dict2uml.dict2plantuml(d)))
+                    break
+                except:
+                    retry += 1
         if os.path.isfile(file_name):
             to_concat += [file_name]
 
